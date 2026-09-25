@@ -1,6 +1,6 @@
-size_of_block = [50, 50, 50];
+block_size = [50, 50, 50];
 smooth = true;
-thin_of_sheet = 2;
+sheet_thickness = 2;
 
 module sheet(){
 	linear_extrude(thin_of_sheet){
@@ -9,38 +9,39 @@ module sheet(){
 module block(size_of_block){
 	cube(size_of_block, center = true);}
 
+////////////////////////////////////////////////////
 
-module sheet_form(sheet, size_of_block, ){
+module sheet_form(
+	sheet_thickness = 2,
+	smooth = true){
 	union(){
-		// (sheet-block)の部分、両オブジェクトの位置は既に決められている
-		linear_extrude(thin_of_sheet){
+		linear_extrude(sheet_thickness){
 			difference(){
 				projection(){
 					sheet();}
+				
 				projection(){
-					block(size_of_block);}}}
+					block(block_size);}}}
 
-		// blockに押された、底面、又は天面
-		translate([0, 0, size_of_block[2]]){
-			linear_extrude(thin_of_sheet){
+		translate([0, 0, size_of_block[2]/2]){
+			linear_extrude(sheet_thickness){
 				difference(){
 					projection(){
 						sheet();}
+					
 					projection(){
-						block(size_of_block);}}}}
+						block(block_size);}}}}
 	   
-		// 周りの部分
-		linear_extrude(size_of_block[2]){
+		linear_extrude(block_size[2]){
 			difference(){
 				projection(){
 
-					if (smooth = true){
-							r_or_d = "r = thin_of_sheet"}
+					if (smooth == true){
+						offset(r = thin_of_sheet){
+							block(block_size);}}
 						else{
-							r_or_d = "delta = thin_of_sheet"}
-
-					offset(r_or_d){
-						block(size_of_block);}}
+							offset(delta = thin_of_sheet){
+								block(block_size);}}}
 
 				projection(){
-					block(size_of_block);}}}}}
+					block(block_size);}}}}}
